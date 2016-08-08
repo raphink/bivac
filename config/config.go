@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"sort"
 
@@ -17,7 +18,7 @@ type Config struct {
 	Manpage             bool     `short:"m" long:"manpage" description:"Output manpage."`
 	NoVerify            bool     `long:"no-verify" description:"Do not verify backup." env:"CONPLICITY_NO_VERIFY"`
 	JSON                bool     `short:"j" long:"json" description:"Log as JSON (to stderr)." env:"CONPLICITY_JSON_OUTPUT"`
-	Engine              string   `short:"E" long:"engine" description:"Backup engine to use." env:"CONPLICITY_ENGINE" default:"duplicity"`
+	Engine              string   `short:"E" long:"engine" description:"Backup engine to use." env:"CONPLICITY_ENGINE" default:"duplicity" ini-name:""`
 	HostnameFromRancher bool     `short:"H" long:"hostname-from-rancher" description:"Retrieve hostname from Rancher metadata." env:"CONPLICITY_HOSTNAME_FROM_RANCHER"`
 
 	Duplicity struct {
@@ -58,8 +59,18 @@ type Config struct {
 func LoadConfig(version string) *Config {
 	var c Config
 	parser := flags.NewParser(&c, flags.Default)
-	if _, err := parser.Parse(); err != nil {
+
+	conffile := fmt.Sprintf("%s/.conplicity.conf", os.Getenv("HOME"))
+	log.Println(conffile)
+
+	parser.Parse()
+	iniParser := flags.NewIniParser(parser)
+	if err := iniParser.ParseFile(conffile); err != nil {
 		os.Exit(1)
+	}
+
+	if err := iniParser.WriteFile(conffile, flags.IniNone); err != nil {
+		log.Fatal(err)
 	}
 
 	if c.Version {
