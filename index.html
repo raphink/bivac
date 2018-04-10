@@ -163,7 +163,7 @@
 						<i class="fh5co-intro-icon icon-rocket"></i>
 						<h2>Launch with Docker</h2>
                         <p><pre><code class="language-shell">$ docker run -v /var/run/docker.sock:/var/run/docker.sock:ro  --rm -ti \
-   -e CONPLICITY_TARGET_URL=s3+http://s3-eu-west-1.amazonaws.com/&lt;my_bucket&gt;/&lt;my_dir&gt; \
+   -e BIVAC_TARGET_URL=s3+http://s3-eu-west-1.amazonaws.com/&lt;my_bucket&gt;/&lt;my_dir&gt; \
    -e AWS_ACCESS_KEY_ID=&lt;my_key_id&gt; \
    -e AWS_SECRET_ACCESS_KEY=&lt;my_secret_key&gt; \
      camptocamp/bivac
